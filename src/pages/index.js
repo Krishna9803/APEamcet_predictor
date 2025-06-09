@@ -17,16 +17,33 @@ export default function Home() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const [error, setError] = useState(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setSearched(true);
-    const params = new URLSearchParams(form).toString();
-    const res = await fetch(`/api/search?${params}`);
-    const data = await res.json();
-    setResults(data);
-    setLoading(false);
+    setError(null);
+
+    try {
+      const params = new URLSearchParams(form).toString();
+      const res = await fetch(`/api/search?${params}`);
+
+      if (!res.ok) {
+        throw new Error(`API Error: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setResults(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  {
+    error && <div className="error">Error: {error}</div>;
+  }
 
   return (
     <div className="container">
