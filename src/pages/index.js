@@ -122,7 +122,7 @@ export default function Home() {
       </form>
 
       {loading && <div className="loading">Loading...</div>}
-      <ResultsTable results={results} searched={searched} />
+      <ResultsTable results={results} searched={searched} loading={loading} />
     </div>
   );
 }
