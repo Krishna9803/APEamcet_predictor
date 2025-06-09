@@ -40,7 +40,7 @@ export default function Home() {
         <input
           name="rank"
           type="number"
-          placeholder="Your Rank"
+          placeholder="Enter rank here"
           value={form.rank}
           onChange={handleChange}
           required
@@ -53,7 +53,11 @@ export default function Home() {
             value={form.branch}
             onChange={handleChange}
             className="form-select"
+            required
           >
+            <option value="" disabled>
+              Select branch
+            </option>
             <option value="CSE">CSE</option>
             <option value="ECE">ECE</option>
             <option value="EEE">EEE</option>
@@ -66,7 +70,11 @@ export default function Home() {
             value={form.region}
             onChange={handleChange}
             className="form-select"
+            required
           >
+            <option value="" disabled>
+              Select region
+            </option>
             <option value="AU">AU</option>
             <option value="SVU">SVU</option>
             <option value="SW">SW</option>
@@ -77,7 +85,11 @@ export default function Home() {
             value={form.caste}
             onChange={handleChange}
             className="form-select"
+            required
           >
+            <option value="" disabled>
+              Select category
+            </option>
             <option value="OC">OC</option>
             <option value="SC">SC</option>
             <option value="ST">ST</option>
@@ -94,7 +106,11 @@ export default function Home() {
             value={form.gender}
             onChange={handleChange}
             className="form-select"
+            required
           >
+            <option value="" disabled>
+              Select gender
+            </option>
             <option value="BOYS">BOYS</option>
             <option value="GIRLS">GIRLS</option>
           </select>
