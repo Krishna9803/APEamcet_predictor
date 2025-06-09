@@ -9,48 +9,38 @@ export default function handler(req, res) {
   }
 
   try {
-    const filePath = path.join(process.cwd(), 'public', 'data.json');
-    console.log(`Reading data from: ${filePath}`);
-    
-    const rawData = fs.readFileSync(filePath, 'utf-8');
+    const filePath = path.join(process.cwd(), "public", "data.json");
+    const rawData = fs.readFileSync(filePath, "utf-8");
     const data = JSON.parse(rawData);
-    console.log(`Loaded ${data.length} colleges`);
 
-    // Handle possible space in category key (e.g. "BCD_BO YS" -> "BCD_BOYS")
+    // Normalize keys: Handle spaces and special characters
     const categoryKey = `${caste.toUpperCase()}_${gender.toUpperCase()}`.replace(/ /g, '');
     const userRank = parseInt(rank);
 
-    console.log('First college keys:', Object.keys(data[0]));
-    console.log('Searching for:', { 
-      categoryKey,
-      userRank,
-      branch,
-      region,
-      sampleData: data[0][categoryKey] // Log value from first college
-    });
-
     const results = data.filter(college => {
-      const rankValue = parseInt(college[categoryKey]);
-      return (
-        college.branch_code?.toUpperCase() === branch.toUpperCase() &&
-        college.INST_REG?.toUpperCase() === region.toUpperCase() &&
-        !isNaN(rankValue) &&
-        rankValue <= userRank
-      );
-    }).map(college => ({
-      ...college,
-      closing_rank: parseInt(college[categoryKey]),
-      difference: userRank - parseInt(college[categoryKey])
-    })).sort((a, b) => a.difference - b.difference);
+      // Handle both "AFFLIA.UNIV" and "AFFLIA_UNIV" cases
+      const collegeRegion = college["INST_REG"] || college["INST_REG."];
+      const closingRank = college[categoryKey] || college[categoryKey.replace('_', ' ')];
 
-    console.log(`Found ${results.length} results for ${categoryKey}`);
+      return college.branch_code?.toUpperCase() === branch.toUpperCase() &&
+             collegeRegion?.toUpperCase() === region.toUpperCase() &&
+             !isNaN(closingRank) &&
+             parseInt(closingRank) >= userRank;
+    }).map(college => ({
+      inst_name: college.inst_name,
+      type: college.type,
+      place: college.PLACE,
+      district: college.DIST,
+      university: college["AFFLIA.UNIV"] || college.AFFLIA_UNIV,
+      fee: college.COLLFEE,
+      closing_rank: parseInt(college[categoryKey] || college[categoryKey.replace('_', ' ')]),
+      branch: college.branch_code
+    })).sort((a, b) => a.closing_rank - b.closing_rank);
+
     res.status(200).json(results);
 
   } catch (error) {
-    console.error('API Error:', error);
-    res.status(500).json({ 
-      error: error.message,
-      details: error.stack 
-    });
+    console.error("API Error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
