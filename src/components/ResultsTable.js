@@ -1,6 +1,14 @@
-export default function ResultsTable({ results, searched }) {
-  if (!searched) return null;
+export default function ResultsTable({ results, searched, loading }) {
+  if (!searched || loading) return null;
 
+  if (results.length === 0) {
+    return (
+      <div className="no-results">
+        No colleges found for the given criteria.
+      </div>
+    );
+  }
+  
   return (
     <div className="results-container">
       {results.length === 0 ? (
