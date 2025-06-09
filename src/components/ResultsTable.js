@@ -20,12 +20,12 @@ export default function ResultsTable({ results, searched, loading }) {
           <tbody>
             {results.map((college, i) => (
               <tr key={i}>
-                <td>{college.inst_name}</td>
-                <td>{college.branch}</td> {/* Changed from branch_code */}
-                <td>{college.place}</td> {/* Changed from PLACE */}
-                <td>{college.district}</td> {/* Changed from DIST */}
+                <td>{college.inst_name.replace(/\n/g, ' ')}</td> {/* Fix line breaks */}
+                <td>{college.branch}</td>
+                <td>{college.place}</td>
+                <td>{college.district}</td>
                 <td>{college.closing_rank}</td>
-                <td>₹{college.fee?.toLocaleString()}</td> {/* Changed from COLLFEE */}
+                <td>₹{college.fee?.toLocaleString() || 'N/A'}</td> {/* Handle missing fees */}
               </tr>
             ))}
           </tbody>
